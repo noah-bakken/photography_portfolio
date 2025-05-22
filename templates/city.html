@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<a href="{{ url_for('country', country=country) }}" class="back-link">← Back to {{ country }}</a>
+<h1>{{ flag }} {{ city }}</h1>
+<div class="grid">
+    {% if images %}
+        {% for image in images %}
+        <div class="card" onclick="openLightbox('{{ url_for('static', filename='photos/' + country + '/' + city + '/' + image) }}', [
+            {% for img in images %}
+                '{{ url_for('static', filename='photos/' + country + '/' + city + '/' + img) }}'{% if not loop.last %},{% endif %}
+            {% endfor %}
+        ])">
+            <img src="{{ url_for('static', filename='photos/' + country + '/' + city + '/' + image) }}" 
+                 alt="Photo of {{ city }}">
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="no-photos">
+            <p>No photos available for {{ city }} yet.</p>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .no-photos {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .no-photos p {
+        color: #666;
+        font-size: 1.2em;
+        margin: 0;
+    }
+</style>
+{% endblock %} 

@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block content %}
+<a href="{{ url_for('home') }}" class="back-link">← Back to Countries</a>
+<h1>{{ data.flag }} {{ country }}</h1>
+<div class="grid">
+    {% for city in data.cities %}
+    <a href="{{ url_for('city', country=country, city=city) }}" class="card">
+        <div class="city-images">
+            {% set city_path = 'photos/' + country + '/' + city %}
+            {% set city_images = get_images_in_folder('static/' + city_path) %}
+            {% if city_images %}
+                {% for image in city_images %}
+                <img src="{{ url_for('static', filename=city_path + '/' + image) }}" 
+                     alt="{{ city }}"
+                     class="city-image {% if loop.first %}active{% endif %}"
+                     onclick="event.preventDefault(); openLightbox('{{ url_for('static', filename=city_path + '/' + image) }}', [
+                        {% for img in city_images %}
+                            '{{ url_for('static', filename=city_path + '/' + img) }}'{% if not loop.last %},{% endif %}
+                        {% endfor %}
+                    ])">
+                {% endfor %}
+                {% if city_images|length > 1 %}
+                <div class="image-nav">
+                    <button class="nav-btn prev" onclick="event.preventDefault(); prevCityImage(this.parentElement.parentElement)">❮</button>
+                    <button class="nav-btn next" onclick="event.preventDefault(); nextCityImage(this.parentElement.parentElement)">❯</button>
+                </div>
+                {% endif %}
+            {% else %}
+                <div class="no-image">
+                    <span>{{ data.flag }}</span>
+                </div>
+            {% endif %}
+        </div>
+        <div class="card-content">
+            <h2>{{ data.flag }} {{ city }}</h2>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+
+<style>
+    .city-images {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16/9;
+        overflow: hidden;
+    }
+    .city-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        cursor: pointer;
+    }
+    .city-image.active {
+        opacity: 1;
+    }
+    .image-nav {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        pointer-events: none;
+    }
+    .nav-btn {
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        margin: 0 10px;
+        pointer-events: auto;
+        opacity: 0;
+        transition: opacity 0.3s ease, background-color 0.3s ease;
+    }
+    .city-images:hover .nav-btn {
+        opacity: 1;
+    }
+    .nav-btn:hover {
+        background: rgba(0, 0, 0, 0.8);
+    }
+    .no-image {
+        width: 100%;
+        aspect-ratio: 16/9;
+        background: #f5f5f5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .no-image span {
+        font-size: 2em;
+    }
+</style>
+
+<script>
+    function prevCityImage(container) {
+        const images = container.querySelectorAll('.city-image');
+        const currentIndex = Array.from(images).findIndex(img => img.classList.contains('active'));
+        images[currentIndex].classList.remove('active');
+        const newIndex = (currentIndex - 1 + images.length) % images.length;
+        images[newIndex].classList.add('active');
+    }
+
+    function nextCityImage(container) {
+        const images = container.querySelectorAll('.city-image');
+        const currentIndex = Array.from(images).findIndex(img => img.classList.contains('active'));
+        images[currentIndex].classList.remove('active');
+        const newIndex = (currentIndex + 1) % images.length;
+        images[newIndex].classList.add('active');
+    }
+
+    // Add keyboard navigation for city images
+    document.addEventListener('keydown', function(e) {
+        const activeCard = document.querySelector('.card:hover');
+        if (!activeCard) return;
+        
+        const cityImages = activeCard.querySelector('.city-images');
+        if (!cityImages) return;
+        
+        switch(e.key) {
+            case 'ArrowLeft':
+                prevCityImage(cityImages);
+                break;
+            case 'ArrowRight':
+                nextCityImage(cityImages);
+                break;
+        }
+    });
+</script>
+{% endblock %} 
