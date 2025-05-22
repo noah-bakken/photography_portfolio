@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Travel Photography</h1>
+<div class="grid">
+    {% for country, data in countries.items() %}
+    <a href="{{ url_for('country', country=country) }}" class="card">
+        {% if data.main_image %}
+        <img src="{{ url_for('static', filename='photos/' + country + '/' + data.main_image) }}" 
+             alt="{{ country }}">
+        {% else %}
+        <div class="no-image">
+            <span>{{ data.flag }}</span>
+        </div>
+        {% endif %}
+        <div class="card-content">
+            <h2>{{ data.flag }} {{ country }}</h2>
+            <p>{{ data.cities|join(', ') }}</p>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+
+<style>
+    .no-image {
+        width: 100%;
+        aspect-ratio: 16/9;
+        background: #f5f5f5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .no-image span {
+        font-size: 2em;
+    }
+</style>
+{% endblock %} 
