@@ -3,6 +3,10 @@
 {% block content %}
 <div class="about-content">
     <h1>About Me</h1>
+    <div class="about-photos">
+        <img src="{{ url_for('static', filename='about_me.png') }}" alt="About Me Photo" class="about-photo">
+        <img src="{{ url_for('static', filename='about_me2.png') }}" alt="About Me Photo 2" class="about-photo">
+    </div>
     <div class="about-text">
         <p>Welcome to my travel photography portfolio! I studied abroad in Barcelona for 4 months and visited 13 countries amongst my time there.</p>
         <p>Throughout my travels, I took a lot of photos and wanted to share them with you all. I've included some of my favorite photos below.</p>
@@ -15,6 +19,31 @@
         max-width: 800px;
         margin: 0 auto;
         padding: 20px;
+    }
+    .about-photos {
+        display: flex;
+        justify-content: center;
+        gap: 24px;
+        margin-bottom: 24px;
+    }
+    .about-photo {
+        display: block;
+        max-width: 180px;
+        width: 40vw;
+        height: auto;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        object-fit: cover;
+    }
+    @media (max-width: 600px) {
+        .about-photos {
+            gap: 10px;
+        }
+        .about-photo {
+            width: 44vw;
+            max-width: 140px;
+            margin: 0;
+        }
     }
     .about-text {
         background: white;

@@ -79,6 +79,10 @@ TRAVEL_DATA = {
     }
 }
 
+VISITED_COUNTRIES = [
+    "France"
+]
+
 def get_images_in_folder(folder_path):
     """Get all image files in a folder."""
     image_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.webp'}
@@ -154,6 +158,30 @@ def about():
 @app.route('/contact')
 def contact():
     return render_template('contact.html')
+
+@app.route('/map')
+def map_page():
+    # List of countries you've visited
+    visited_countries = [
+        # Project countries
+        "Spain", "Iceland", "Morocco", "Croatia", "Greece", "Portugal", "Hungary",
+        "United Kingdom", "Germany", "Netherlands", "Austria", "Slovakia", "Czech Republic",
+        # Additional countries
+        "Israel", "Denmark", "Norway", "Poland", "Turks and Caicos", "Canada", "Costa Rica",
+        "United States"
+    ]
+    bucket_list_countries = [
+        "Turkey",
+        "Japan",
+        "Singapore",
+        "United Arab Emirates",
+        "Switzerland",
+        "United Republic of Tanzania",
+        "New Zealand",
+        "Australia",
+        "Madagascar",
+    ]
+    return render_template('map.html', visited_countries=visited_countries, bucket_list_countries=bucket_list_countries)
 
 if __name__ == '__main__':
     # Run the app on all network interfaces (0.0.0.0) on port 5001

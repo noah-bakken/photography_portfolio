@@ -21,6 +21,11 @@
     {% endfor %}
 </div>
 
+<div id="cat1" class="cat run"></div>
+<div id="cat2" class="cat jump"></div>
+<div id="cat3" class="cat fall"></div>
+<div id="cat4" class="cat exit"></div>
+
 <style>
     .no-image {
         width: 100%;
@@ -33,5 +38,32 @@
     .no-image span {
         font-size: 2em;
     }
+    .cat {
+        position: absolute;
+        width: 128px;
+        height: 128px;
+        background-repeat: no-repeat;
+        background-position: left center;
+        background-size: cover;
+        image-rendering: pixelated;
+        display: none;
+        z-index: 1;
+        background-image: url('/static/sprites/2_Cat_Run-Sheet.png');
+    }
 </style>
+
+<script>
+const showAndHide = (showId, hideId, delay) => {
+  setTimeout(() => {
+    if (hideId) document.getElementById(hideId).style.display = 'none';
+    document.getElementById(showId).style.display = 'block';
+  }, delay);
+};
+
+// Storyboard sequence
+showAndHide('cat1', null,      0);     // Run in
+showAndHide('cat2', 'cat1',  3000);    // Jump up
+showAndHide('cat3', 'cat2',  5000);    // Fall down
+showAndHide('cat4', 'cat3',  7000);    // Exit run
+</script>
 {% endblock %} 

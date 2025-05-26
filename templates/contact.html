@@ -1,71 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="contact-content">
-    <h1>Contact Me</h1>
-    <div class="contact-form">
-        <form action="#" method="POST">
-            <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" required>
-            </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="message">Message</label>
-                <textarea id="message" name="message" rows="5" required></textarea>
-            </div>
-            <button type="submit" class="submit-btn">Send Message</button>
-        </form>
-    </div>
-</div>
-
+<div class="contact-removed">Contact information is now in the footer.</div>
 <style>
-    .contact-content {
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-    .contact-form {
-        background: white;
-        padding: 30px;
-        border-radius: 8px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .form-group {
-        margin-bottom: 20px;
-    }
-    label {
-        display: block;
-        margin-bottom: 5px;
-        color: #333;
-        font-weight: 500;
-    }
-    input, textarea {
-        width: 100%;
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 16px;
-    }
-    input:focus, textarea:focus {
-        outline: none;
-        border-color: #666;
-    }
-    .submit-btn {
-        background: #333;
-        color: white;
-        border: none;
-        padding: 12px 24px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 16px;
-        transition: background-color 0.3s;
-    }
-    .submit-btn:hover {
-        background: #444;
-    }
+.contact-removed {
+    text-align: center;
+    color: #64748b;
+    font-size: 1.2em;
+    margin-top: 48px;
+}
 </style>
 {% endblock %} 

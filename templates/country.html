@@ -124,14 +124,23 @@
         images[newIndex].classList.add('active');
     }
 
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ensure only one image is visible per city card
+        document.querySelectorAll('.city-images').forEach(function(container) {
+            const images = container.querySelectorAll('.city-image');
+            images.forEach((img, idx) => {
+                if (idx !== 0) img.classList.remove('active');
+                else img.classList.add('active');
+            });
+        });
+    });
+
     // Add keyboard navigation for city images
     document.addEventListener('keydown', function(e) {
         const activeCard = document.querySelector('.card:hover');
         if (!activeCard) return;
-        
         const cityImages = activeCard.querySelector('.city-images');
         if (!cityImages) return;
-        
         switch(e.key) {
             case 'ArrowLeft':
                 prevCityImage(cityImages);
