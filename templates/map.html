@@ -310,7 +310,7 @@
     </div>
     <div class="stat-card">
         <span class="stat-number" id="total-count">0</span>
-        <div class="stat-label">European Countries</div>
+        <div class="stat-label">Total Countries</div>
     </div>
     <div class="stat-card">
         <span class="stat-number" id="percentage">0%</span>
@@ -571,8 +571,7 @@
         document.getElementById('visited-count').textContent = visitedCount;
         document.getElementById('total-count').textContent = totalCountries;
         document.getElementById('percentage').textContent = percentage + '%';
-        document.getElementById('next-country').textContent = nextDestination.length > 10 ? 
-            nextDestination.substring(0, 8) + '...' : nextDestination;
+        document.getElementById('next-country').textContent = "United Arab Emirates";
     }
 
     function updateCountryList() {
