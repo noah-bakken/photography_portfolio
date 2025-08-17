@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Photography</title>
+    <style>
+        body {
+            font-family: 'San Francisco', 'SF Pro Display', 'SF Pro Text', 'Segoe UI', 'Arial', 'sans-serif';
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(120deg, #f8fafc 0%, #e8eaf6 100%);
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 28px 48px 40px 48px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .logo {
+            height: 80px;
+            margin-right: 20px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            justify-content: flex-end;
+            margin-left: auto;
+        }
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 1.4em;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: background 0.3s, color 0.3s;
+        }
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .nav-padding { display: block; height: 28px; }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 48px 20px 20px 20px;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'San Francisco', 'SF Pro Display', 'SF Pro Text', 'Segoe UI', 'Arial', 'sans-serif';
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+        h1 {
+            text-align: center;
+            color: #764ba2;
+            margin-bottom: 36px;
+            font-size: 2.1em;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 32px;
+            padding: 20px 0;
+        }
+        .card {
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            transition: transform 0.13s cubic-bezier(.4,1.2,.6,1), box-shadow 0.13s;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            cursor: pointer;
+            position: relative;
+        }
+        .card:hover {
+            transform: translateY(-4px) scale(1.0125);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+        }
+        .card img {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            display: block;
+            position: relative;
+        }
+        .card img::after {
+            content: '';
+            position: absolute;
+            left: 0; right: 0; top: 0; bottom: 0;
+            background: linear-gradient(180deg,rgba(0,0,0,0.04) 60%,rgba(0,0,0,0.18) 100%);
+            pointer-events: none;
+        }
+        .card-content {
+            padding: 18px 18px 14px 18px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .card-content h2 {
+            margin: 0 0 6px 0;
+            font-size: 1.13em;
+            color: #1a1a1a;
+            font-weight: 700;
+        }
+        .card-content p {
+            margin: 0;
+            color: #666;
+            font-size: 0.98em;
+            font-weight: 400;
+            letter-spacing: 0.01em;
+        }
+        .no-image {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .no-image span {
+            font-size: 2em;
+        }
+        @media (min-width: 900px) {
+            .container {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 48px 0 0 0;
+            }
+            .header {
+                padding-top: 15px;
+                padding-bottom: 15px;
+            }
+        }
+        @media (max-width: 800px) {
+            .header {
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 14px 6px 24px 6px;
+                box-shadow: 0 2px 10px rgba(102, 126, 234, 0.10);
+            }
+            .logo {
+                height: 80px;
+                margin: 0 0 8px 0;
+                display: block;
+            }
+            .nav-links {
+                gap: 8px;
+                width: 100%;
+                justify-content: center;
+                margin: 0;
+            }
+            .nav-links a {
+                padding: 8px 10px;
+                font-size: 1em;
+                border-radius: 8px;
+            }
+            .nav-padding { display: none; }
+        }
+
+        /* Lightbox styles */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .lightbox.active {
+            display: flex;
+            opacity: 1;
+        }
+        .lightbox-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .lightbox-image {
+            max-width: 90%;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+        .lightbox-close:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+        .lightbox-nav:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+        .lightbox-prev {
+            left: 20px;
+        }
+        .lightbox-next {
+            right: 20px;
+        }
+        .cat {
+            position: fixed;
+            width: 128px;
+            height: 128px;
+            background-repeat: no-repeat;
+            background-position: left center;
+            background-size: cover;
+            image-rendering: pixelated;
+            display: none;
+            z-index: 2000;
+            pointer-events: none;
+            opacity: 1;
+        }
+        /* RUN (8 frames) */
+        .run {
+            background-image: url('/static/sprites/2_Cat_Run-Sheet.png');
+            background-size: 1024px 128px;
+            animation: run-sprite 1.2s steps(8) infinite,
+                       move-across 2s linear forwards;
+        }
+        /* JUMP (4 frames) */
+        .jump {
+            background-image: url('/static/sprites/3_Cat_Jump-Sheet.png');
+            background-size: 512px 128px;
+            animation: jump-sprite 0.6s steps(4) infinite,
+                       move-jump 2s ease-in-out forwards;
+        }
+        /* FALL (4 frames) */
+        .fall {
+            background-image: url('/static/sprites/4_Cat_Fall-Sheet.png');
+            background-size: 512px 128px;
+            animation: fall-sprite 0.6s steps(4) infinite,
+                       move-fall 2s ease-in forwards;
+        }
+        /* EXIT RUN */
+        .exit {
+            background-image: url('/static/sprites/2_Cat_Run-Sheet.png');
+            background-size: 1024px 128px;
+            animation: run-sprite 0.8s steps(8) infinite,
+                       move-exit 3s linear forwards;
+        }
+        @keyframes run-sprite {
+            100% { background-position: -1024px 0; }
+        }
+        @keyframes jump-sprite {
+            100% { background-position: -512px 0; }
+        }
+        @keyframes fall-sprite {
+            100% { background-position: -512px 0; }
+        }
+        @keyframes move-across {
+            0%   { left: -128px; top: 20px; }
+            100% { left: 45%; top: 20px; }
+        }
+        @keyframes move-jump {
+            0%   { left: 45%; top: 20px; }
+            50%  { left: 50%; top: -80px; }
+            100% { left: 55%; top: 20px; }
+        }
+        @keyframes move-fall {
+            0%   { left: 55%; top: 20px; }
+            100% { left: 60%; top: 20px; }
+        }
+        @keyframes move-exit {
+            0%   { left: 60%; top: 20px; }
+            100% { left: 110%; top: 20px; }
+        }
+        .cat-toggle {
+            background: rgba(240,240,240,0.7);
+            border: none;
+            padding: 5px 14px;
+            border-radius: 999px;
+            font-size: 0.98em;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            color: #222;
+            font-family: inherit;
+            font-weight: 500;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+        .cat-toggle:hover {
+            background: #222;
+            color: #fff;
+        }
+        .cat-toggle.active {
+            background: #222;
+            color: #fff;
+        }
+        .footer {
+            width: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            text-align: center;
+            padding: 32px 0 18px 0;
+            font-size: 1.1em;
+            font-family: 'SF Pro Display', 'SF Pro Icons', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            border-top: none;
+            margin-top: 48px;
+            position: relative;
+            z-index: 1000;
+            box-shadow: 0 -4px 24px rgba(102, 126, 234, 0.08);
+        }
+        .footer-content {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        .footer-links {
+            display: flex;
+            gap: 32px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        .footer-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            padding: 8px 18px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.08);
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            font-size: 1.05em;
+        }
+        .footer-links a:hover {
+            background: #fff;
+            color: #764ba2;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.13);
+        }
+        .footer-copy {
+            font-size: 0.98em;
+            opacity: 0.85;
+            margin-top: 4px;
+        }
+        @media (max-width: 600px) {
+            .footer-content {
+                gap: 10px;
+            }
+            .footer-links {
+                gap: 12px;
+            }
+            .footer-links a {
+                padding: 8px 10px;
+                font-size: 0.98em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="/">
+            <img src="/static/logo.png" alt="Travel Lens" class="logo">
+        </a>
+        <nav class="nav-links">
+            <a href="/">Pictures</a>
+            <a href="/map">Map</a>
+            <a href="/about">About Me</a>
+        </nav>
+        <div class="nav-padding"></div>
+    </header>
+    <div class="container">
+        
+<a href="/country/Spain" class="back-link">← Back to Spain</a>
+<h1>🇪🇸 Seville</h1>
+<div class="grid">
+    
+        
+        <div class="card" onclick="openLightbox('/static/photos/Spain/Seville/IMG_8273.jpg', [
+            
+                '/static/photos/Spain/Seville/IMG_8273.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8270.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8199.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8201.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8232.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8222.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8223.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8235.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8251.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8256.jpg'
+            
+        ])">
+            <img src="/static/photos/Spain/Seville/IMG_8273.jpg" 
+                 alt="Photo of Seville">
+        </div>
+        
+        <div class="card" onclick="openLightbox('/static/photos/Spain/Seville/IMG_8270.jpg', [
+            
+                '/static/photos/Spain/Seville/IMG_8273.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8270.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8199.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8201.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8232.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8222.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8223.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8235.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8251.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8256.jpg'
+            
+        ])">
+            <img src="/static/photos/Spain/Seville/IMG_8270.jpg" 
+                 alt="Photo of Seville">
+        </div>
+        
+        <div class="card" onclick="openLightbox('/static/photos/Spain/Seville/IMG_8199.jpg', [
+            
+                '/static/photos/Spain/Seville/IMG_8273.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8270.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8199.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8201.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8232.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8222.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8223.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8235.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8251.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8256.jpg'
+            
+        ])">
+            <img src="/static/photos/Spain/Seville/IMG_8199.jpg" 
+                 alt="Photo of Seville">
+        </div>
+        
+        <div class="card" onclick="openLightbox('/static/photos/Spain/Seville/IMG_8201.jpg', [
+            
+                '/static/photos/Spain/Seville/IMG_8273.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8270.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8199.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8201.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8232.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8222.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8223.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8235.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8251.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8256.jpg'
+            
+        ])">
+            <img src="/static/photos/Spain/Seville/IMG_8201.jpg" 
+                 alt="Photo of Seville">
+        </div>
+        
+        <div class="card" onclick="openLightbox('/static/photos/Spain/Seville/IMG_8232.jpg', [
+            
+                '/static/photos/Spain/Seville/IMG_8273.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8270.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8199.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8201.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8232.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8222.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8223.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8235.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8251.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8256.jpg'
+            
+        ])">
+            <img src="/static/photos/Spain/Seville/IMG_8232.jpg" 
+                 alt="Photo of Seville">
+        </div>
+        
+        <div class="card" onclick="openLightbox('/static/photos/Spain/Seville/IMG_8222.jpg', [
+            
+                '/static/photos/Spain/Seville/IMG_8273.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8270.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8199.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8201.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8232.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8222.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8223.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8235.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8251.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8256.jpg'
+            
+        ])">
+            <img src="/static/photos/Spain/Seville/IMG_8222.jpg" 
+                 alt="Photo of Seville">
+        </div>
+        
+        <div class="card" onclick="openLightbox('/static/photos/Spain/Seville/IMG_8223.jpg', [
+            
+                '/static/photos/Spain/Seville/IMG_8273.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8270.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8199.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8201.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8232.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8222.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8223.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8235.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8251.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8256.jpg'
+            
+        ])">
+            <img src="/static/photos/Spain/Seville/IMG_8223.jpg" 
+                 alt="Photo of Seville">
+        </div>
+        
+        <div class="card" onclick="openLightbox('/static/photos/Spain/Seville/IMG_8235.jpg', [
+            
+                '/static/photos/Spain/Seville/IMG_8273.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8270.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8199.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8201.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8232.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8222.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8223.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8235.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8251.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8256.jpg'
+            
+        ])">
+            <img src="/static/photos/Spain/Seville/IMG_8235.jpg" 
+                 alt="Photo of Seville">
+        </div>
+        
+        <div class="card" onclick="openLightbox('/static/photos/Spain/Seville/IMG_8251.jpg', [
+            
+                '/static/photos/Spain/Seville/IMG_8273.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8270.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8199.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8201.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8232.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8222.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8223.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8235.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8251.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8256.jpg'
+            
+        ])">
+            <img src="/static/photos/Spain/Seville/IMG_8251.jpg" 
+                 alt="Photo of Seville">
+        </div>
+        
+        <div class="card" onclick="openLightbox('/static/photos/Spain/Seville/IMG_8256.jpg', [
+            
+                '/static/photos/Spain/Seville/IMG_8273.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8270.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8199.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8201.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8232.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8222.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8223.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8235.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8251.jpg',
+            
+                '/static/photos/Spain/Seville/IMG_8256.jpg'
+            
+        ])">
+            <img src="/static/photos/Spain/Seville/IMG_8256.jpg" 
+                 alt="Photo of Seville">
+        </div>
+        
+    
+</div>
+
+<style>
+    .no-photos {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .no-photos p {
+        color: #666;
+        font-size: 1.2em;
+        margin: 0;
+    }
+</style>
+
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-content">
+            <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+            <span class="lightbox-nav lightbox-prev" onclick="prevImage()">❮</span>
+            <img class="lightbox-image" id="lightbox-image" src="" alt="">
+            <span class="lightbox-nav lightbox-next" onclick="nextImage()">❯</span>
+        </div>
+    </div>
+
+    <script>
+        let currentImageIndex = 0;
+        let images = [];
+
+        function openLightbox(imageSrc, allImages) {
+            images = allImages;
+            currentImageIndex = images.indexOf(imageSrc);
+            updateLightboxImage();
+            document.getElementById('lightbox').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function updateLightboxImage() {
+            const lightboxImage = document.getElementById('lightbox-image');
+            lightboxImage.src = images[currentImageIndex];
+        }
+
+        function prevImage() {
+            currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+            updateLightboxImage();
+        }
+
+        function nextImage() {
+            currentImageIndex = (currentImageIndex + 1) % images.length;
+            updateLightboxImage();
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (!document.getElementById('lightbox').classList.contains('active')) return;
+            
+            switch(e.key) {
+                case 'Escape':
+                    closeLightbox();
+                    break;
+                case 'ArrowLeft':
+                    prevImage();
+                    break;
+                case 'ArrowRight':
+                    nextImage();
+                    break;
+            }
+        });
+
+        // Close lightbox when clicking outside the image
+        document.getElementById('lightbox').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLightbox();
+            }
+        });
+
+        // Cat toggle functionality
+        const catToggle = document.getElementById('catToggle');
+        const cat = document.getElementById('cat1');
+        let isCatRunning = false;
+
+        catToggle.addEventListener('click', function() {
+            isCatRunning = !isCatRunning;
+            this.classList.toggle('active');
+            
+            if (isCatRunning) {
+                cat.style.display = 'block';
+                cat.style.animation = 'run-sprite 1.2s steps(8) infinite, move-across 2s linear forwards';
+            } else {
+                cat.style.display = 'none';
+                cat.style.animation = 'none';
+            }
+        });
+
+        // Initially hide the cat
+        cat.style.display = 'none';
+    </script>
+    <!-- Cat storyboard animation (moved to end of body) -->
+    <div id="cat1" class="cat run" style="display: none;"></div>
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="mailto:nbakken@iu.edu" title="Email" target="_blank">
+                    <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="vertical-align:middle;margin-right:6px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12l-4 4m0 0l-4-4m4 4V4m8 16a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h4m4 0h4a2 2 0 012 2v12z"/></svg>
+                    nbakken@iu.edu
+                </a>
+                <a href="https://www.linkedin.com/in/noah-bakken/" title="LinkedIn" target="_blank">
+                    <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:6px;"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.268c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm15.5 11.268h-3v-5.604c0-1.337-.025-3.063-1.868-3.063-1.868 0-2.154 1.459-2.154 2.967v5.7h-3v-10h2.881v1.367h.041c.401-.761 1.379-1.563 2.841-1.563 3.039 0 3.6 2.001 3.6 4.601v5.595z"/></svg>
+                    LinkedIn
+                </a>
+                <a href="https://noahbakken.framer.website/" title="Portfolio" target="_blank">
+                    <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:6px;"><path d="M12 0l8 4v8l-8 4-8-4v-8l8-4zm0 2.18l-6 3v6l6 3 6-3v-6l-6-3zm0 13.82l8-4v8l-8 4-8-4v-8l8 4zm0 2.18l-6-3v6l6 3 6-3v-6l-6 3z"/></svg>
+                    Portfolio
+                </a>
+            </div>
+            <div class="footer-copy">&copy; 2024 Noah Bakken</div>
+        </div>
+    </footer>
+</body>
+</html> 

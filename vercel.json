@@ -1,0 +1,13 @@
+{
+  "installCommand": "pip3 install -r requirements.txt",
+  "buildCommand": "python3 generate_static.py",
+  "outputDirectory": "static_site",
+  "framework": null,
+  "redirects": [
+    { "source": "/country/:country", "destination": "/country/:country/", "permanent": false },
+    { "source": "/city/:country/:city", "destination": "/city/:country/:city/", "permanent": false },
+    { "source": "/about", "destination": "/about/", "permanent": false },
+    { "source": "/contact", "destination": "/contact/", "permanent": false },
+    { "source": "/map", "destination": "/map/", "permanent": false }
+  ]
+}
